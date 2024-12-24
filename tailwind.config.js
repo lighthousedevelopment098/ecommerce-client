@@ -27,7 +27,7 @@ const colors = {
 
         primary: {
             50: '#A1CA46',
-            100: '#A1CA46',
+            100: '#165310',
             200: '#A1CA46',
             300: '#A1CA46',
             400: '#96bf39', // main color
