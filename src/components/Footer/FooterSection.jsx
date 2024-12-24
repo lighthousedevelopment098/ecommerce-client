@@ -3,7 +3,8 @@ import AppStore from '../../assets/socials-icons/apple_app.png'
 import GoogleApp from '../../assets/socials-icons/google_app.png'
 import FooterItems from './FooterItems'
 import { FaEnvelope, FaMapMarkerAlt, FaPhone } from 'react-icons/fa'
-import logo from './../../assets/app-logo/vista-app-logo-transp.png'
+// import logo from './../../assets/app-logo/vista-app-logo-transp.png'
+import logo from '/log3.jpg'
 import { useCustomerSubscribeMutation } from '../../redux/slices/customersApiSlice'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
@@ -144,11 +145,11 @@ const FooterMainSection = () => {
                             <div className="flex flex-wrap justify-around">
                                 <div className="flex items-center">
                                     <FaEnvelope className="mr-2" />
-                                    <span>info@vistamart.pk</span>
+                                    <span>info@ebazzar.pk</span>
                                 </div>
                                 <div className="flex items-center">
                                     <FaPhone className="mr-2" />
-                                    <span>info@vistamart.biz</span>
+                                    <span>info@ebazzar.biz</span>
                                 </div>
                                 {/* <div className="flex items-center">
                                     <FaTicketAlt className="mr-2" />
@@ -163,9 +164,9 @@ const FooterMainSection = () => {
                                 </div>
                                 <hr className="border-white lg:w-[60%] lg:my-4" />
                             </div>
-                            <div className="flex items-center">
+                            <div className="flex text-nowrap items-center">
                                 <FaMapMarkerAlt className="mr-2" />
-                                <span>DHA Phase 1</span>
+                                <span> HSA Islamabad</span>
                             </div>
                         </div>
                     </div>

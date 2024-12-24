@@ -8,7 +8,8 @@ import {
     FaSearch,
 } from 'react-icons/fa'
 import { Menu, MenuHandler, MenuList, MenuItem } from '@material-tailwind/react'
-import logo from '../../assets/app-logo/vista-app-logo.png'
+// import logo from '../../assets/app-logo/vista-app-logo.png'
+import logo from '/ebazzarlogo2.jpg'
 import SearchBar from './SerachBar'
 import { Link } from 'react-router-dom'
 import ProfileMenu from '../Profile/ProfileMenu'

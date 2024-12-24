@@ -74,7 +74,8 @@ const RootLayout = () => {
             <>
                 {/* Global Helmet for the entire app */}
                 <Helmet>
-                    <title>Vista Mart - Best Online Shopping Experience</title>
+                    {/* <title>Vista Mart - Best Online Shopping Experience</title> */}
+                    <title>E-Commerce Bazzar</title>
                     <meta
                         name="description"
                         content="Shop at Vista Mart for a wide range of products with the best deals!"
