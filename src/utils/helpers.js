@@ -1,6 +1,8 @@
 /* eslint-disable react/prop-types */
 import axios from 'axios'
 import keys from '../config/keys'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
+
 // Function to get a pre-signed upload URL
 export const getUploadUrl = async (type, folder) => {
     try {
@@ -71,4 +73,29 @@ export const formatPrice = (value) => {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
           })
+}
+
+export const formatPAKPhoneNumber = (phoneNumber) => {
+    // Remove the leading '+' and country code '92', then prepend '0'
+    const formattedNumber = phoneNumber.replace('+92', '0')
+
+    // Split the number into chunks: the first chunk for area code and the second for the rest of the number
+    const formattedWithDashes = formattedNumber.replace(
+        /(\d{4})(\d{7})/,
+        '$1-$2'
+    )
+
+    return formattedWithDashes
+}
+
+export const getCountryCode = (phoneNumber) => {
+    try {
+        const parsedNumber = parsePhoneNumberFromString(phoneNumber)
+        if (!parsedNumber || !parsedNumber.isValid()) {
+            throw new Error('Invalid phone number')
+        }
+        return parsedNumber.country // Returns the ISO 3166-1 alpha-2 country code
+    } catch (error) {
+        return `Error: ${error.message}`
+    }
 }

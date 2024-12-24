@@ -1,12 +1,21 @@
+/* eslint-disable no-unused-vars */
 import { createSlice } from '@reduxjs/toolkit'
+import encryptionManager from '../../utils/encryptionManager'
 
 let initialState = {}
 
+// Decrypt userInfo during initialization
 if (typeof localStorage !== 'undefined') {
-    initialState = {
-        userInfo: localStorage.getItem('userInfo')
-            ? JSON.parse(localStorage.getItem('userInfo'))
-            : null,
+    const encryptedUserInfo = localStorage.getItem('userInfo')
+    try {
+        initialState = {
+            userInfo: encryptedUserInfo
+                ? encryptionManager.decrypt(encryptedUserInfo)
+                : null,
+        }
+    } catch (error) {
+        localStorage.clear()
+        window.location.reload()
     }
 }
 
@@ -16,27 +25,33 @@ const authSlice = createSlice({
     reducers: {
         setCredentials: (state, action) => {
             state.userInfo = action.payload
-            localStorage.setItem('userInfo', JSON.stringify(action.payload))
 
+            // Encrypt and store userInfo
+            const encryptedData = encryptionManager.encrypt(action.payload)
+            localStorage.setItem('userInfo', encryptedData)
+
+            // Set an expiration time
             const expirationTime =
                 new Date().getTime() + 30 * 24 * 60 * 60 * 1000 // 30 days
             localStorage.setItem('expirationTime', expirationTime)
         },
         updateCredentials: (state, action) => {
             state.userInfo = action.payload
-            localStorage.setItem('userInfo', JSON.stringify(action.payload))
-        },
 
+            // Encrypt and store updated userInfo
+            const encryptedData = encryptionManager.encrypt(action.payload)
+            localStorage.setItem('userInfo', encryptedData)
+        },
         logout: (state, action) => {
             state.userInfo = null
-            // NOTE: here we need to also remove the cart from storage so the next
-            // logged in user doesn't inherit the previous users cart and shipping
-            // localStorage.clear()
+
+            // Clear userInfo and other sensitive data
             localStorage.removeItem('userInfo')
+            localStorage.removeItem('expirationTime')
         },
     },
 })
 
-export const { setCredentials, logout } = authSlice.actions
+export const { setCredentials, updateCredentials, logout } = authSlice.actions
 
 export default authSlice.reducer

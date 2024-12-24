@@ -14,7 +14,7 @@ export const orderApiSlice = apiSlice.injectEndpoints({
             query: (orderId) => ({
                 url: `${ORDERS_URL}/details/${orderId}`,
             }),
-            keepUnusedDataFor: 5,
+            keepUnusedDataFor: 10,
         }),
         payOrder: builder.mutation({
             query: ({ orderId, details }) => ({
@@ -29,11 +29,17 @@ export const orderApiSlice = apiSlice.injectEndpoints({
             query: (id) => ({
                 url: `${ORDERS_URL}?customer=${id}`,
             }),
-            keepUnusedDataFor: 5,
+            keepUnusedDataFor: 10,
         }),
         getOrderStatus: builder.query({
             query: (id) => ({
                 url: `${ORDERS_URL}/track-order/${id}`,
+            }),
+            keepUnusedDataFor: 5,
+        }),
+        trackingOrderStatus: builder.query({
+            query: (id) => ({
+                url: `https://app.sonic.pk/api/shipment/track?tracking_number=${id}&type=0`,
             }),
             keepUnusedDataFor: 5,
         }),
@@ -60,4 +66,5 @@ export const {
     useGetOrdersQuery,
     useDeliverOrderMutation,
     useGetOrderStatusQuery,
+    useTrackingOrderStatusQuery,
 } = orderApiSlice

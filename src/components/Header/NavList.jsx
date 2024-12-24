@@ -7,6 +7,7 @@ import {
 import React from 'react'
 import { Link } from 'react-router-dom'
 import BrandDropDownItem from '../Brands/BrandDropDownItem'
+import keys from '../../config/keys'
 
 const NavList = () => {
     const [openMenu, setOpenMenu] = React.useState(false)
@@ -39,7 +40,7 @@ const NavList = () => {
                     <BrandDropDownItem />
                 </MenuList>
             </Menu>
-            {/* <Typography
+            <Typography
                 as="li"
                 variant="paragraph"
                 color="blue-gray"
@@ -48,7 +49,7 @@ const NavList = () => {
                 <Link to="/products" className="navbar-item">
                     Products
                 </Link>
-            </Typography> */}
+            </Typography>
             <Typography
                 as="li"
                 variant="paragraph"
@@ -102,7 +103,7 @@ const NavList = () => {
                         className="p-1 font-medium border-0 outline-none"
                     >
                         <Link
-                            to="http://seller.vistamart.biz"
+                            to={keys.SELLER_CLIENT_URL}
                             className="flex items-center text-black border-b hover:text-primary-400 transition-colors"
                         >
                             Vendor login

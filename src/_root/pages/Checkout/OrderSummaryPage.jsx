@@ -3,11 +3,11 @@ import { Link, useNavigate } from 'react-router-dom'
 import { FaTruck, FaShieldAlt, FaUndo, FaCheckCircle } from 'react-icons/fa'
 import { MdOutlineCelebration } from 'react-icons/md'
 import { useEffect } from 'react'
-import { useCreateOrderMutation } from '../../redux/slices/ordersApiSlice'
+import { useCreateOrderMutation } from '../../../redux/slices/ordersApiSlice'
 import toast from 'react-hot-toast'
-import { clearCartItems } from '../../redux/slices/cartSlice'
-import { formatPrice } from '../../utils/helpers'
-import useAuth from './../../hooks/useAuth'
+import { resetCart } from '../../../redux/slices/cartSlice'
+import { formatPAKPhoneNumber, formatPrice } from '../../../utils/helpers'
+import useAuth from '../../../hooks/useAuth'
 
 const OrderSummaryPage = () => {
     const cart = useSelector((state) => state.cart)
@@ -64,43 +64,14 @@ const OrderSummaryPage = () => {
             const orders = Object.keys(groupedOrders).map((vendorId) => {
                 const vendorOrder = groupedOrders[vendorId]
 
-                // Calculate all totals in one pass
-                // const totals = vendorOrder.products.reduce(
-                //     (acc, product) => {
-                //         acc.totalAmount +=
-                //             product.price * product.quantity -
-                //             (product.discountAmount || 0) +
-                //             ((product.taxIncluded && product.taxAmount) || 0) +
-                //             product.shippingCost
-
-                //         acc.totalDiscount += product.discountAmount || 0
-                //         acc.totalShippingCost += product.shippingCost || 0
-                //         acc.totalQty += product.quantity
-                //         acc.totalTaxAmount +=
-                //             (product.taxIncluded && product.taxAmount) || 0 // Ensure taxAmount is handled even if missing
-
-                //         return acc
-                //     },
-                //     {
-                //         totalAmount: 0,
-                //         totalDiscount: 0,
-                //         totalShippingCost: 0,
-                //         totalQty: 0,
-                //         totalTaxAmount: 0,
-                //     }
-                // )
-
                 const totals = vendorOrder.products.reduce(
                     (acc, product) => {
                         // Ensure all values are defined and use defaults if not
                         const price = product.price || 0
                         const quantity = product.quantity || 0
                         const discount = product.discountAmount * quantity || 0
-                        const shippingCost =
-                            product.shippingCost * quantity || 0
-                        const taxAmount = product.taxIncluded
-                            ? product.taxAmount * quantity || 0
-                            : 0
+                        const shippingCost = product.shippingCost || 0
+                        const taxAmount = product.taxAmount * quantity || 0
 
                         // Calculate total amount for this product
                         const productTotal =
@@ -127,12 +98,25 @@ const OrderSummaryPage = () => {
                     }
                 )
 
+                const shippingAddress = {
+                    ...cart?.shippingAddress,
+                    phoneNumber: formatPAKPhoneNumber(
+                        cart?.shippingAddress?.phoneNumber
+                    ),
+                }
+                const billingAddress = {
+                    ...cart?.billingAddress,
+                    phoneNumber: formatPAKPhoneNumber(
+                        cart?.billingAddress?.phoneNumber
+                    ),
+                }
+
                 return {
                     vendor: vendorId,
                     products: vendorOrder.products,
                     customerId: user?._id,
-                    shippingAddress: cart?.shippingAddress,
-                    billingAddress: cart?.billingAddress,
+                    shippingAddress,
+                    billingAddress,
                     paymentMethod: cart?.paymentMethod,
                     totalAmount: totals.totalAmount,
                     totalDiscount: totals.totalDiscount,
@@ -142,7 +126,6 @@ const OrderSummaryPage = () => {
                     paymentStatus: cart?.paymentStatus,
                 }
             })
-
             if (orders.length !== 0) {
                 // Submit each order separately
                 for (const order of orders) {
@@ -153,7 +136,9 @@ const OrderSummaryPage = () => {
                 }
 
                 // Clear cart and navigate to confirmation
-                dispatch(clearCartItems())
+                // dispatch(clearCartItems())
+                dispatch(resetCart())
+
                 // navigate('/order-confirmation')
                 window.location.href = '/order-confirmation'
             }

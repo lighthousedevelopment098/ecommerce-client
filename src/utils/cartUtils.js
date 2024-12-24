@@ -1,3 +1,5 @@
+import encryptionManager from './encryptionManager'
+
 export const addDecimals = (num) => {
     if (isNaN(num)) return 0 // Handle invalid numbers
 
@@ -27,10 +29,7 @@ export const updateCart = (state) => {
 
     // Calculate the shipping price with a fallback to 0
     state.totalShippingPrice = addDecimals(
-        state.cartItems.reduce(
-            (acc, item) => acc + (item.shippingCost || 0) * (item.qty || 0),
-            0
-        )
+        state.cartItems.reduce((acc, item) => acc + (item.shippingCost || 0), 0)
     )
 
     // Calculate the tax price
@@ -64,7 +63,15 @@ export const updateCart = (state) => {
     )
 
     // Save the updated cart to localStorage
-    localStorage.setItem('cart', JSON.stringify(state))
+    // localStorage.setItem('cart', JSON.stringify(state))
+
+    // Save the updated cart to localStorage securely
+    try {
+        const encryptedCart = encryptionManager.encrypt(state)
+        localStorage.setItem('cart', encryptedCart)
+    } catch (error) {
+        console.error('Failed to encrypt cart data:', error)
+    }
 
     return state
 }
