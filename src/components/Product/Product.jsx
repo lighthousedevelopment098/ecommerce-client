@@ -17,14 +17,21 @@ const Product = ({ product }) => {
     const [images, setImages] = useState([])
 
     useEffect(() => {
-        if (!product?.taxIncluded) {
-            setTotalPrice((product?.price + product.taxAmount) * qty)
+        if (product?.discountAmount > 0) {
+            const total = product?.price - product?.discountAmount
+            setTotalPrice(total * qty)
         } else setTotalPrice(product.price * qty)
 
         setImages([...product.images, product?.thumbnail])
     }, [product, qty])
 
-    const oldPrice = product?.price + product?.discountAmount || 0
+    const discountAmount = product?.discountAmount || 0
+
+    // Avoid division by zero by ensuring oldPrice is greater than 0
+    const percentageDiscount =
+        product.price > 0
+            ? Math.round((discountAmount / product.price) * 100)
+            : 0
 
     const { cartItems } = useSelector((state) => state.cart)
 
@@ -55,6 +62,8 @@ const Product = ({ product }) => {
                 `The min. order for this item is ${product.minimumOrderQty} piece. Adjust quantity to continue.`
             )
     }
+
+    console.log(product)
 
     return (
         <div className="flex flex-col w-full p-4 rounded-lg">
@@ -90,12 +99,24 @@ const Product = ({ product }) => {
                     </div>
                     <div className="flex items-center gap-2">
                         <p className="text-xl font-bold text-primary-400">
-                            Rs.{formatPrice(product.price)}
+                            <span className="text-xs">Rs.</span>
+                            {product.discountAmount > 0
+                                ? formatPrice(
+                                      product?.price - product.discountAmount
+                                  )
+                                : formatPrice(product?.price)}
                         </p>
-                        {oldPrice > product.price && (
-                            <p className="text-sm font-semibold line-through text-gray-500">
-                                Rs.{formatPrice(oldPrice)}
+                        {product.discountAmount > 0 && product.price && (
+                            <p className="text-sm line-through text-gray-500">
+                                {formatPrice(product.price)}
                             </p>
+                        )}
+                        {percentageDiscount > 0 && (
+                            <div className=" text-primary-500 border border-primary-500 py-1 px-2">
+                                <p className="font-semibold text-xs">
+                                    - {percentageDiscount}% of Discount
+                                </p>
+                            </div>
                         )}
                     </div>
                     <div className="flex items-center">
@@ -130,12 +151,13 @@ const Product = ({ product }) => {
                             Total Price:
                         </h3>
                         <p className="text-xl font-bold text-primary-400 transition-all duration-100 ease-in">
-                            Rs.{formatPrice(totalPrice)}
+                            <span className="text-xs">Rs.</span>
+                            {formatPrice(totalPrice)}
                         </p>
                         <span className="mx-2 px-1 text-xs">
                             {product.taxIncluded
-                                ? '(Tax: incl.)'
-                                : `(Tax: Rs. ${product.taxAmount || 0})`}
+                                ? `(Tax: Rs. ${product.taxAmount || 0})`
+                                : '(Tax: incl.)'}
                         </span>
                     </div>
                     <div className="flex gap-6 w-full">

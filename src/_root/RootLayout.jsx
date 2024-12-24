@@ -1,19 +1,21 @@
 import { Suspense, useEffect, useState } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import toast from 'react-hot-toast'
+import { Helmet } from 'react-helmet-async'
+
 import Header from '../components/Header'
 import StickyIcons from '../components/shared/StcikyIcons'
 import Contacts from '../components/shared/Contacts'
 import Footer from '../components/Footer'
 import Loader from '../components/Loader'
-
-import { validateSession } from '../api/validateService'
-import { useDispatch, useSelector } from 'react-redux'
 import SessionExpiredModal from './../components/shared/SessionExpiredModal'
-import toast from 'react-hot-toast'
+
 import { useCheckHealthQuery } from '../redux/slices/apiHealthSlice'
-import { Helmet } from 'react-helmet-async'
 import { logout } from '../redux/slices/authSlice'
 import { useCustomerLogoutMutation } from '../redux/slices/customersApiSlice'
+
+import { validateSession } from '../api/validateService'
 
 const RootLayout = () => {
     const [isLoading, setIsLoading] = useState(true)
@@ -86,7 +88,7 @@ const RootLayout = () => {
                 </Helmet>
                 <div className="bg-[#f3f5f9]">
                     <Header />
-                    <div className="lg:w-[90%] w-full mx-auto md:px-8 px-4 ">
+                    <div className="lg:w-[95%] w-full mx-auto md:px-8 px-4 ">
                         <Suspense
                             fallback={
                                 <div>

@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
 import useAuth from '../../hooks/useAuth'
 import { z } from 'zod'
+import { phoneValidation } from '../../utils'
 
 const shippingAddressSchema = z.object({
     name: z
@@ -18,10 +19,7 @@ const shippingAddressSchema = z.object({
             /^[a-zA-Z\s]+$/,
             'Name must not contain numbers or special characters'
         ),
-    phoneNumber: z
-        .string()
-        .min(10, 'Phone Number must be at least 10 digits')
-        .max(20, 'Phone Number cannot exceed 15 digits'),
+    phoneNumber: phoneValidation,
     country: z
         .string()
         .min(1, 'Country is required')
@@ -30,14 +28,7 @@ const shippingAddressSchema = z.object({
             /^[a-zA-Z\s]+$/,
             'Country must not contain numbers or special characters'
         ),
-    city: z
-        .string()
-        .min(1, 'City is required')
-        .max(50, 'City cannot exceed 50 characters')
-        .regex(
-            /^[a-zA-Z\s]+$/,
-            'City must not contain numbers or special characters'
-        ),
+    city: z.string().min(1, 'City is required'),
     state: z
         .string()
         .min(1, 'State is required')
@@ -73,8 +64,22 @@ const ShippingAddressPage = () => {
     }, [cart, navigate, user])
 
     const handleSubmit = (data) => {
-        dispatch(saveShippingAddress(data))
-        dispatch(saveBillingAddress(data))
+        const { city } = data
+        const { cityId, cityName } = JSON.parse(city)
+
+        const addressData = {
+            name: data.name,
+            phoneNumber: data.phoneNumber,
+            address: data.address,
+            city: cityName,
+            cityId: cityId,
+            state: data.state,
+            zipCode: data.zipCode,
+            country: data.country,
+        }
+
+        dispatch(saveShippingAddress(addressData))
+        dispatch(saveBillingAddress(addressData))
 
         navigate('/checkout/payment-methods')
     }

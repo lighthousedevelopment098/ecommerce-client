@@ -13,6 +13,8 @@ import { LazyLoadImage } from 'react-lazy-load-image-component'
 const CartItem = ({ item }) => {
     // console.log(item)
     const [qty, setQty] = useState(0)
+    const [totalPrice, setTotalPrice] = useState(item.price || 0)
+
     const dispatch = useDispatch()
 
     useEffect(() => {
@@ -20,6 +22,13 @@ const CartItem = ({ item }) => {
             setQty(item.qty)
         }
     }, [item.qty])
+
+    useEffect(() => {
+        if (item?.discountAmount > 0) {
+            const total = item?.price - item?.discountAmount
+            setTotalPrice(total * qty)
+        } else setTotalPrice(item.price * qty)
+    }, [item, qty])
 
     const removeFromCartHandler = (item) => {
         dispatch(removeFromCart(item))
@@ -62,7 +71,10 @@ const CartItem = ({ item }) => {
                         variant="paragraph"
                         className="text-sm text-gray-600"
                     >
-                        Price: Rs.{formatPrice(item.price)}
+                        <span className="text-xs">Price: Rs.</span>
+                        {item.discountAmount > 0
+                            ? formatPrice(item?.price - item.discountAmount)
+                            : formatPrice(item?.price)}
                     </Typography>
                 </div>
             </div>
@@ -80,8 +92,8 @@ const CartItem = ({ item }) => {
                     variant="paragraph"
                     className="font-bold align-middle text-base"
                 >
-                    Total: Rs.
-                    {formatPrice(item.qty * item.price)}
+                    <span className="text-xs">Total: Rs.</span>
+                    {formatPrice(totalPrice)}
                 </Typography>
             </div>
         </div>
