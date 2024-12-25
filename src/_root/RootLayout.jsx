@@ -85,7 +85,7 @@ const RootLayout = () => {
                         name="keywords"
                         content="shopping, ecommerce, online store, best deals"
                     />
-                    <meta name="author" content="Vista Mart" />
+                    <meta name="author" content="E-Commerce Bazzar" />
                     <link rel="canonical" href="https://vistamart.biz/" />
                 </Helmet>
                 <div className="bg-[#f3f5f9]">
